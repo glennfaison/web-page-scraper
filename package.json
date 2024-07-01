@@ -1,0 +1,39 @@
+{
+  "name": "nodejs",
+  "version": "1.0.0",
+  "description": "Web Page Analysis",
+  "main": "server/index.js",
+  "scripts": {
+    "setup:client": "yarn --cwd ./client",
+    "setup:server": "yarn",
+    "setup": "yarn setup:client && yarn setup:server",
+    "dev:client": "yarn --cwd ./client start",
+    "dev:server": "nodemon server/index.js",
+    "dev": "concurrently --kill-others \"yarn dev:server\" \"yarn dev:client\"",
+    "test:client": "yarn --cwd ./client test",
+    "test:server": "jest --coverage --detectOpenHandles server/*.test.js server/**/*.test.js",
+    "test": "yarn test:server && yarn test:client",
+    "start": "node server/index.js",
+    "build:client": "yarn --cwd ./client build"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.12",
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "express-rate-limit": "^7.3.1",
+    "primereact": "^10.6.6",
+    "puppeteer": "^22.6.4"
+  },
+  "devDependencies": {
+    "@types/node": "^18.0.6",
+    "concurrently": "^5.1.0",
+    "eslint": "^9.6.0",
+    "eslint-plugin-jsdoc": "^48.5.0",
+    "jest": "^29.7.0",
+    "nodemon": "^3.1.4",
+    "supertest": "^7.0.0"
+  }
+}
