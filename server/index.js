@@ -6,9 +6,9 @@ const cors = require('cors');
 const { rateLimit } = require('express-rate-limit');
 
 const { getBrowserService } = require('./services/browser');
-const { getPageAnalysisService } = require('./services/page-analysis');
+const { getPageScraperService } = require('./services/page-scraper');
 const { getMemoryCacheService } = require('./services/memory-cache');
-const { getPageAnalysisRouter } = require('./routers/page-analysis');
+const { getPageScraperRouter } = require('./routers/page-scraper');
 
 const PORT = process.env.PORT || 3003;
 
@@ -28,11 +28,11 @@ async function run() {
 
     const browserSvc = getBrowserService();
     await browserSvc.initializeBrowser();
-    const pageAnalysisService = getPageAnalysisService();
+    const pageScraperService = getPageScraperService();
     
     const /** @type {MemoryCacheService<WebPageData>} */ memoryCacheService = getMemoryCacheService();
-    const pageAnalysisRouter = getPageAnalysisRouter(browserSvc, memoryCacheService, pageAnalysisService);
-    pageAnalysisRouter.registerRoutes(app);
+    const pageScraperRouter = getPageScraperRouter(browserSvc, memoryCacheService, pageScraperService);
+    pageScraperRouter.registerRoutes(app);
 
     app.listen(PORT, () => {
         console.log('server is listening on port: ', PORT);

@@ -3,26 +3,26 @@ const express = require('express');
 
 const { getBrowserService } = require("../services/browser");
 const { getMemoryCacheService } = require("../services/memory-cache");
-const { getPageAnalysisService } = require("../services/page-analysis");
-const { getPageAnalysisRouter } = require("./page-analysis");
+const { getPageScraperService } = require("../services/page-scraper");
+const { getPageScraperRouter } = require("./page-scraper");
 const { SECONDS } = require('../services/utils');
 
 // const memoryCacheService = jest.mock('../services/memory-cache');
 // const browserService = jest.mock('../services/browser');
-// const pageAnalysisService = jest.mock('../services/page-analysis');
+// const pageScraperService = jest.mock('../services/page-analysis');
 
 const memoryCacheService = getMemoryCacheService();
 const browserService = getBrowserService();
-const pageAnalysisService = getPageAnalysisService();
+const pageScraperService = getPageScraperService();
 
-describe('PageAnalysisRouter', () => {
+describe('PageScraperRouter', () => {
     let /** @type {Express} */ app;
-    let /** @type {PageAnalysisRouter} */ router;
+    let /** @type {PageScraperRouter} */ router;
 
     beforeEach(async () => {
         app = express();
         await browserService.initializeBrowser();
-        router = getPageAnalysisRouter(browserService, memoryCacheService, pageAnalysisService);
+        router = getPageScraperRouter(browserService, memoryCacheService, pageScraperService);
         router.registerRoutes(app);
     });
 

@@ -5,10 +5,10 @@ const cheerio = require('cheerio');
 const { URL } = require('url');
 
 /**
- * Returns a PageAnalysisService object
- * @returns {PageAnalysisService}
+ * Returns a PageScraperService object
+ * @returns {PageScraperService}
  */
-const getPageAnalysisService = () => {
+const getPageScraperService = () => {
     /**
      * Check a given page for a login form
      * @param {cheerio.CheerioAPI} $ 
@@ -200,7 +200,7 @@ const getPageAnalysisService = () => {
      * Perform analysis of the web page whose URL is provided.
      * @param {string} pageHTML HTML string from the page
      * @param {string} pageUrl URL of the page
-     * @param {PageAnalysisServiceConfig} [config] 
+     * @param {PageScraperServiceConfig} [config] 
      * @returns {WebPageData}
      */
     const getWebPageData = async (pageHTML, pageUrl, config = { performDeepAnalysis: false }) => {
@@ -227,5 +227,5 @@ const getPageAnalysisService = () => {
 };
 
 module.exports = {
-    getPageAnalysisService,
+    getPageScraperService,
 };

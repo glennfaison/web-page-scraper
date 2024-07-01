@@ -3,13 +3,13 @@
  */
 
 /**
- * Returns a PageAnalysisService object
+ * Returns a PageScraperService object
  * @param {BrowserService} browserService
  * @param {MemoryCacheService<WebPageData>} memoryCacheService
- * @param {PageAnalysisService} pageAnalysisService
- * @returns {PageAnalysisRouter}
+ * @param {PageScraperService} pageScraperService
+ * @returns {PageScraperRouter}
  */
-const getPageAnalysisRouter = (browserService, memoryCacheService, pageAnalysisService) => {
+const getPageScraperRouter = (browserService, memoryCacheService, pageScraperService) => {
 
     return {
         registerRoutes: (expressRouter) => {
@@ -27,7 +27,7 @@ const getPageAnalysisRouter = (browserService, memoryCacheService, pageAnalysisS
                 const pageHTML = await page.content();
                 await page.close();
 
-                const result = await pageAnalysisService.getWebPageData(pageHTML, url, { performDeepAnalysis });
+                const result = await pageScraperService.getWebPageData(pageHTML, url, { performDeepAnalysis });
                 const advancedHrefDataPromise = result.advancedHrefDataPromise;
                 delete result.advancedHrefDataPromise;
                 const uuid = crypto.randomUUID();
@@ -58,5 +58,5 @@ const getPageAnalysisRouter = (browserService, memoryCacheService, pageAnalysisS
 };
 
 module.exports = {
-    getPageAnalysisRouter,
+    getPageScraperRouter,
 };

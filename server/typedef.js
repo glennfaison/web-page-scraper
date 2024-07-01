@@ -1,5 +1,5 @@
 /**
- * @typedef {object} PageAnalysisServiceConfig
+ * @typedef {object} PageScraperServiceConfig
  * @property {boolean} [config.performDeepAnalysis=false]
  */
 
@@ -46,7 +46,7 @@
  */
 
 /**
- * @typedef {object} PageAnalysisService
+ * @typedef {object} PageScraperService
  * @property {(pageHTML: string, pageUrl: string, config?: any) => Promise<WebPageData>} getWebPageData
  * @property {(relativeUrl: string, domainUrl: string) => string} getAbsoluteUrl
  * @property {(hrefData?: any) => Promise<AdvancedHrefData>} getAdvancedHrefData
@@ -77,6 +77,6 @@
  */
 
 /**
- * @typedef {object} PageAnalysisRouter
+ * @typedef {object} PageScraperRouter
  * @property {(expressRouter: import('express').Express) => void} registerRoutes - Registers HTTP(S) routes
  */

@@ -1,21 +1,21 @@
 const cheerio = require('cheerio');
-const { getPageAnalysisService } = require('./page-analysis');
+const { getPageScraperService } = require('./page-analysis');
 const { getBrowserService } = require('./browser');
 const { getPageHTML, SECONDS } = require('./utils');
 
 
 describe('getWebPageData', () => {
     let browserService = null;
-    let /** @type {PageAnalysisService} */ pageAnalysisService = null;
+    let /** @type {PageScraperService} */ pageScraperService = null;
 
     beforeEach(() => {
         browserService = getBrowserService();
-        pageAnalysisService = getPageAnalysisService();
+        pageScraperService = getPageScraperService();
     });
 
     afterEach(() => {
         browserService = null;
-        pageAnalysisService = null;
+        pageScraperService = null;
     });
 
     it('should not throw errors for valid login pages', async () => {
@@ -23,7 +23,7 @@ describe('getWebPageData', () => {
 
         for (const url of urls) {
             const pageHTML = await getPageHTML(url);
-            expect(async () => await pageAnalysisService.getWebPageData(pageHTML, url)).not.toThrowError();
+            expect(async () => await pageScraperService.getWebPageData(pageHTML, url)).not.toThrowError();
         }
     }, 20 * SECONDS);
 
@@ -47,7 +47,7 @@ describe('getWebPageData', () => {
         for (const url of urls) {
             const pageHTML = await getPageHTML(url);
 
-            const result = await pageAnalysisService.getWebPageData(pageHTML, url);
+            const result = await pageScraperService.getWebPageData(pageHTML, url);
             results.push(result);
         }
 
@@ -57,7 +57,7 @@ describe('getWebPageData', () => {
 
     describe('advancedHrefDataPromise', () => {
         let mockFetch, originalFetch;
-        let /** @type {PageAnalysisService} */ pageAnalysisService;
+        let /** @type {PageScraperService} */ pageScraperService;
         const pageHtml = '<a href="http://example.com">Internal Link</a><a href="https://google.com">External Link</a>';
         const currentUrl = 'http://example.com';
     
@@ -65,13 +65,13 @@ describe('getWebPageData', () => {
             mockFetch = jest.fn();
             originalFetch = global.fetch;
             global.fetch = mockFetch;
-            pageAnalysisService = getPageAnalysisService();
+            pageScraperService = getPageScraperService();
         });
     
         afterAll(() => {
             global.fetch = originalFetch;
             jest.resetAllMocks();
-            pageAnalysisService = null;
+            pageScraperService = null;
         });
     
         it('should return valid internal and external links', async () => {
@@ -85,7 +85,7 @@ describe('getWebPageData', () => {
                 }
             });
     
-            const webPageData = await pageAnalysisService.getWebPageData(pageHtml, currentUrl, { performDeepAnalysis: true });
+            const webPageData = await pageScraperService.getWebPageData(pageHtml, currentUrl, { performDeepAnalysis: true });
             const result = await webPageData.advancedHrefDataPromise;
     
             expect(result.internal).toEqual([
@@ -107,7 +107,7 @@ describe('getWebPageData', () => {
                 }
             });
     
-            const webPageData = await pageAnalysisService.getWebPageData(pageHtml, currentUrl, { performDeepAnalysis: true });
+            const webPageData = await pageScraperService.getWebPageData(pageHtml, currentUrl, { performDeepAnalysis: true });
             const result = await webPageData.advancedHrefDataPromise;
     
             expect(result.internal).toEqual([
@@ -129,7 +129,7 @@ describe('getWebPageData', () => {
                 }
             });
     
-            const webPageData = await pageAnalysisService.getWebPageData(pageHtml, currentUrl, { performDeepAnalysis: true });
+            const webPageData = await pageScraperService.getWebPageData(pageHtml, currentUrl, { performDeepAnalysis: true });
             const result = await webPageData.advancedHrefDataPromise;
     
             expect(result.internal).toEqual([
@@ -143,20 +143,20 @@ describe('getWebPageData', () => {
 });
 
 describe('getAbsoluteUrl', () => {
-    let pageAnalysisService /** @type {import("./page-analysis").PageAnalysisService} */ = null;
+    let pageScraperService /** @type {import("./page-analysis").PageScraperService} */ = null;
 
     beforeEach(() => {
-        pageAnalysisService = getPageAnalysisService();
+        pageScraperService = getPageScraperService();
     });
 
     afterEach(() => {
-        pageAnalysisService = null;
+        pageScraperService = null;
     });
 
     test('should return a valid URL object for a relative URL', () => {
         const domainUrl = 'https://www.example.com/path/to/page';
         const url = '/some-relative-path';
-        const urlObject = pageAnalysisService.getAbsoluteUrl(url, domainUrl);
+        const urlObject = pageScraperService.getAbsoluteUrl(url, domainUrl);
 
         expect(urlObject).toBeInstanceOf(URL);
         expect(urlObject.href).toBe('https://www.example.com/some-relative-path');
@@ -167,7 +167,7 @@ describe('getAbsoluteUrl', () => {
     test('should return a valid URL object for an absolute URL', () => {
         const domainUrl = 'https://www.example.com/path/to/page';
         const url = 'https://www.other-site.com/some-page';
-        const urlObject = pageAnalysisService.getAbsoluteUrl(url, domainUrl);
+        const urlObject = pageScraperService.getAbsoluteUrl(url, domainUrl);
 
         expect(urlObject).toBeInstanceOf(URL);
         expect(urlObject.href).toBe('https://www.other-site.com/some-page');
