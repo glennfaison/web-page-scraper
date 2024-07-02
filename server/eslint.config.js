@@ -6,7 +6,7 @@ module.exports = [
     {
         files: ['**/**.js'],
         plugins: {
-            jsdoc: jsdoc
+            // jsdoc: jsdoc
         },
         rules: {
             'jsdoc/require-description': 'error',

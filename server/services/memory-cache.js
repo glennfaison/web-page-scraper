@@ -26,10 +26,11 @@ const getMemoryCacheService = (storageLifeSpanMS = SECONDS * 60 * 60 * 0.5) => {
      * Set the cleanup interval
      * @param {number} milliseconds The interval after which the cleanup function should run
      */
-    const setCleanupInterval = (milliseconds) => {
+    const setCleanupInterval = async (milliseconds) => {
         clearInterval(interval);
         storageLifeSpanMS = milliseconds;
         // Periodically run the cleanup function
+        await process.nextTick(()=>{});
         interval = setInterval(() => cleanupMemoryCache(), storageLifeSpanMS);
     };
 

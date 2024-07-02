@@ -42,14 +42,13 @@
  * @property {HeadingData} headingData Headings on the page, from H1 to H6
  * @property {HrefData} hrefData hrefs on the page, internal and external
  * @property {boolean} hasLoginForm true if a login/signin form was found, false otherwise
- * @property {Promise<AdvancedHeadingData>} advancedHrefDataPromise a Promise that resolves to the advanced heading data
+ * @property {Promise<AdvancedHrefData>} advancedHrefDataPromise a Promise that resolves to the advanced heading data
  */
 
 /**
  * @typedef {object} PageScraperService
  * @property {(pageHTML: string, pageUrl: string, config?: any) => Promise<WebPageData>} getWebPageData
  * @property {(relativeUrl: string, domainUrl: string) => string} getAbsoluteUrl
- * @property {(hrefData?: any) => Promise<AdvancedHrefData>} getAdvancedHrefData
  */
 
 /**

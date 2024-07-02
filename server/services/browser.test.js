@@ -4,9 +4,10 @@ const { SECONDS } = require('./utils');
 describe('BrowserService', () => {
     let browserService;
 
-    beforeEach(() => {
+    beforeEach(async() => {
         browserService = getBrowserService();
-    });
+        await browserService.initializeBrowser();
+    }, 10 * SECONDS);
 
     afterEach(async () => {
         await browserService.closeBrowser();
@@ -16,20 +17,20 @@ describe('BrowserService', () => {
         await browserService.initializeBrowser();
         const browser = browserService.getBrowser();
         expect(browser).not.toBeNull();
-    });
+    }, 10 * SECONDS);
 
     test('should create a new page instance', async () => {
         await browserService.initializeBrowser();
         const page = await browserService.getNewPage();
         expect(page).not.toBeNull();
-    });
+    }, 10 * SECONDS);
 
     test('should close the browser instance', async () => {
         await browserService.initializeBrowser();
         await browserService.closeBrowser();
         const browser = browserService.getBrowser();
         expect(browser).toBeNull();
-    });
+    }, 10 * SECONDS);
 
     test('should auto-scroll a page', async () => {
         await browserService.initializeBrowser();

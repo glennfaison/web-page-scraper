@@ -5,7 +5,7 @@
 /**
  * Returns a PageScraperService object
  * @param {BrowserService} browserService
- * @param {MemoryCacheService<WebPageData>} memoryCacheService
+ * @param {MemoryCacheService<Promise<WebPageData>>} memoryCacheService
  * @param {PageScraperService} pageScraperService
  * @returns {PageScraperRouter}
  */
@@ -19,7 +19,7 @@ const getPageScraperRouter = (browserService, memoryCacheService, pageScraperSer
                 if (!url) {
                     return res.sendStatus(400);
                 }
-    
+
                 const page = await browserService.getNewPage();
                 await page.goto(url);
                 await page.setViewport({ width: 1200, height: 800 });
@@ -44,13 +44,15 @@ const getPageScraperRouter = (browserService, memoryCacheService, pageScraperSer
                     return res.json({ error: 'Missing UUID parameter' }).status(400);
                 }
                 try {
-                    const { payload } = await memoryCacheService.get(id);
-                    const advancedHrefData = await payload;
+                    const cachedData = await memoryCacheService.get(id);
+                    if (!cachedData) {
+                        return res.sendStatus(404);
+                    }
+                    const advancedHrefData = await cachedData.payload;
                     return res.json({ advancedHrefData }).status(200);
                 } catch (err) {
-                    const response = { message: 'could not find data by id ', id, error: err };
-                    console.error(response);
-                    return res.json(response).status(404);
+                    const response = { error: err.message };
+                    return res.json(response).status(500);
                 }
             });
         },

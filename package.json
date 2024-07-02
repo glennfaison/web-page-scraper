@@ -24,7 +24,6 @@
     "cors": "^2.8.5",
     "express": "^4.19.2",
     "express-rate-limit": "^7.3.1",
-    "primereact": "^10.6.6",
     "puppeteer": "^22.6.4"
   },
   "devDependencies": {

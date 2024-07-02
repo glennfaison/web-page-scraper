@@ -1,5 +1,4 @@
-const cheerio = require('cheerio');
-const { getPageScraperService } = require('./page-analysis');
+const { getPageScraperService } = require('./page-scraper');
 const { getBrowserService } = require('./browser');
 const { getPageHTML, SECONDS } = require('./utils');
 
@@ -8,12 +7,13 @@ describe('getWebPageData', () => {
     let browserService = null;
     let /** @type {PageScraperService} */ pageScraperService = null;
 
-    beforeEach(() => {
+    beforeAll(async () => {
         browserService = getBrowserService();
+        await browserService.initializeBrowser();
         pageScraperService = getPageScraperService();
     });
 
-    afterEach(() => {
+    afterAll(() => {
         browserService = null;
         pageScraperService = null;
     });
@@ -22,7 +22,7 @@ describe('getWebPageData', () => {
         const urls = ['https://github.com/login', 'https://linkedin.com/login'];
 
         for (const url of urls) {
-            const pageHTML = await getPageHTML(url);
+            const pageHTML = await await getPageHTML(url); // Jest requires both `await` keywords for some reason
             expect(async () => await pageScraperService.getWebPageData(pageHTML, url)).not.toThrowError();
         }
     }, 20 * SECONDS);
@@ -143,7 +143,7 @@ describe('getWebPageData', () => {
 });
 
 describe('getAbsoluteUrl', () => {
-    let pageScraperService /** @type {import("./page-analysis").PageScraperService} */ = null;
+    let pageScraperService /** @type {import("./page-scraper").PageScraperService} */ = null;
 
     beforeEach(() => {
         pageScraperService = getPageScraperService();

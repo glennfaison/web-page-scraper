@@ -223,7 +223,7 @@ const getPageScraperService = () => {
         }
     };
 
-    return { listLinksAdvanced: getAdvancedHrefData, getAbsoluteUrl, getWebPageData };
+    return { getAbsoluteUrl, getWebPageData };
 };
 
 module.exports = {
