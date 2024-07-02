@@ -1,5 +1,5 @@
 const { getMemoryCacheService } = require('./memory-cache'); // Assuming the file is named memory-cache-service.js
-const { SECONDS, asyncWait } = require('./utils');
+const { SECONDS, waitAsync } = require('./utils');
 
 describe('MemoryCacheService', () => {
     let /** @type {MemoryCacheService<any>} */ service;
@@ -35,7 +35,7 @@ describe('MemoryCacheService', () => {
         await service.set(uuid, input);
         const data = await service.get(uuid);
 
-        await asyncWait(1 * SECONDS);
+        await waitAsync(1 * SECONDS);
         const expiredData = await service.get(uuid);
         expect(expiredData).toBeUndefined();
     });

@@ -1,4 +1,4 @@
-const { getPageHTML, asyncWait } = require('./utils');
+const { getPageHTML, waitAsync } = require('./utils');
 
 describe('getPageHTML', () => {
     let mockFetch;
@@ -44,12 +44,12 @@ describe('getPageHTML', () => {
     });
 });
 
-describe('asyncWait', () => {
+describe('waitAsync', () => {
     it('should wait for the specified milliseconds', async () => {
         const waitTime = 100; // Milliseconds
 
         const startTime = Date.now();
-        await asyncWait(waitTime);
+        await waitAsync(waitTime);
         const endTime = Date.now();
 
         const elapsedTime = endTime - startTime;

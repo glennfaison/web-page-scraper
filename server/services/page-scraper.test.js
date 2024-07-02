@@ -4,7 +4,7 @@ const { getPageHTML, SECONDS } = require('./utils');
 
 
 describe('getWebPageData', () => {
-    let browserService = null;
+    let /** @type {BrowserService} */ browserService = null;
     let /** @type {PageScraperService} */ pageScraperService = null;
 
     beforeAll(async () => {
@@ -143,7 +143,7 @@ describe('getWebPageData', () => {
 });
 
 describe('getAbsoluteUrl', () => {
-    let pageScraperService /** @type {import("./page-scraper").PageScraperService} */ = null;
+    let /** @type {PageScraperService} */ pageScraperService = null;
 
     beforeEach(() => {
         pageScraperService = getPageScraperService();

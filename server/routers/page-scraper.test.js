@@ -17,12 +17,13 @@ describe('PageScraperRouter', () => {
 
     beforeAll(async () => {
         await browserService.initializeBrowser();
-    }, 10 * SECONDS);
-
-    beforeEach(async () => {
         app = express();
         router = getPageScraperRouter(browserService, memoryCacheService, pageScraperService);
         router.registerRoutes(app);
+    }, 10 * SECONDS);
+
+    afterAll(async () => {
+        await browserService.closeBrowser();
     }, 10 * SECONDS);
 
     describe('GET /api/v1/analyze', () => {

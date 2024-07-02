@@ -9,7 +9,7 @@ const getPageHTML = async (url) => {
     }
 };
 
-const asyncWait = (waitMS) => {
+const waitAsync = (waitMS) => {
     return new Promise(resolve => setTimeout(resolve, waitMS));
 };
 
@@ -18,5 +18,5 @@ const SECONDS = 1000;
 module.exports = {
     getPageHTML,
     SECONDS,
-    asyncWait,
+    waitAsync,
 };
