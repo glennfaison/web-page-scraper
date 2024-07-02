@@ -2,7 +2,7 @@ const { getMemoryCacheService } = require('./memory-cache'); // Assuming the fil
 const { SECONDS, asyncWait } = require('./utils');
 
 describe('MemoryCacheService', () => {
-    let /** @type {MemoryCacheService} */ service;
+    let /** @type {MemoryCacheService<any>} */ service;
     let /** @type {import('crypto').UUID} */ uuid;
     let input;
 

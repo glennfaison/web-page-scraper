@@ -62,7 +62,7 @@
  * @typedef {object} MemoryCacheService<T>
  * @property {(uuid: import("crypto").UUID) => Promise<MemoryCacheEntity<T>>} get - Retrieves the stored data for the provided UUID
  * @property {(uuid: import("crypto").UUID, payload: T) => Promise<void>} set - Stores the provided payload with the given UUID
- * @property {() => Promise<void>} dispose - Clears the memory used
+ * @property {() => void} dispose - Clears the memory used
  * @property {(milliseconds: number) => void} setCleanupInterval - Set the time interval for running the cleanup function
  */
 
