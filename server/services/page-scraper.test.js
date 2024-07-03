@@ -17,7 +17,8 @@ describe('getWebPageData', () => {
         const urls = ['https://github.com/login', 'https://linkedin.com/login'];
 
         for (const url of urls) {
-            const pageHTML = await await getPageHTML(url); // Jest requires both `await` keywords for some reason {@see https://stackoverflow.com/questions/69976411/jest-tlswrap-open-handle-error-using-simple-node-postgres-pool-query-fixed-wit}
+            await process.nextTick(() => {}); // {@see https://stackoverflow.com/questions/69976411/jest-tlswrap-open-handle-error-using-simple-node-postgres-pool-query-fixed-wit}
+            const pageHTML = await getPageHTML(url);
             expect(async () => await pageScraperService.getWebPageData(pageHTML, url)).not.toThrowError();
         }
     }, 20 * SECONDS);

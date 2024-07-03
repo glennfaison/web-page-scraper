@@ -10,11 +10,25 @@ const { URL } = require('url');
  */
 const getPageScraperService = () => {
     /**
+     * Retrieves the language tags from an HTML document using Cheerio.
+     *
+     * @param {cheerio.CheerioAPI} $ - The Cheerio instance representing the HTML document.
+     * @returns {string[]} - An array of language tags, including the one set on the <html> tag.
+     */
+    const getLanguageTags = ($) => {
+        const htmlLang = $('html').attr('lang');
+        const langTags = $('*[lang]').map((i, el) => $(el).attr('lang')).get();
+
+        return [htmlLang, ...langTags].filter(Boolean);
+    };
+
+    /**
      * Check a given page for a login form
      * @param {cheerio.CheerioAPI} $ 
      * @returns {Promise<boolean>}
      */
-    const hasLoginForm = ($, electiveKeywords = ['login', 'log in', 'sign in', 'signin'], mandatoryKeywords = []) => {
+    const hasLoginForm = ($, electiveKeywords = ['login', 'log in', 'sign in', 'signin']) => {
+        const languages = getLanguageTags($);
         return new Promise((resolve) => {
             $('form:has(input[type="password"])').each((_, form) => {
                 const passwordInputs = $(form).find('input[type="password"]');
@@ -33,10 +47,9 @@ const getPageScraperService = () => {
                 // Check if the form text contains login keywords
                 const formHtml = $(form).html().toLowerCase();
                 const formHtmlContainsAnyElectiveKeywords = electiveKeywords.some(keyword => formHtml.includes(keyword));
-                const formHtmlContainsAllMandatoryKeywords = mandatoryKeywords.every(keyword => formHtml.includes(keyword));
 
                 // If there is one password input and the form text contains login keywords, it's a login form
-                if (formHtmlContainsAnyElectiveKeywords && formHtmlContainsAllMandatoryKeywords && passwordInputs.length === 1) {
+                if (formHtmlContainsAnyElectiveKeywords && passwordInputs.length === 1) {
                     return resolve(true);
                 }
             });
