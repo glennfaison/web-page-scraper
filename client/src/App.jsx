@@ -1,12 +1,14 @@
 import React, { useCallback, useState } from "react";
 import { ProgressSpinner } from "primereact/progressspinner";
 import "./App.css";
+import { WebPageDataTable } from "./components/WebPageDataTable";
+import { AdvancedHrefDataTable } from "./components/AdvancedHrefDataTable";
 
 /**
  * 
  * @param {string} inputUrl 
  * @param {boolean} performDeepAnalysis 
- * @returns {Promise<WebPageData>}
+ * @returns {Promise<any>}
  */
 async function httpGet(requestUrl) {
   try {
@@ -85,94 +87,16 @@ function App() {
       </header>
       <main id="main">
         {!isFetchingWebPageData && webPageData && (
-          <div className="card">
-            <table className="horizontal-table">
-              <tbody>
-                {/* Miscellaneous Data */}
-                <tr>
-                  <th>HTML DocType</th>
-                  <td>{webPageData.docType}</td>
-                </tr>
-                <tr>
-                  <th>Page Title</th>
-                  <td>{webPageData.pageTitle.trim()}</td>
-                </tr>
-                <tr>
-                  <th>Login Form Found?</th>
-                  <td>{webPageData.hasLoginForm ? "True" : "False"}</td>
-                </tr>
-                {/* End Miscellaneous Data */}
-                {/* Heading Data */}
-                {headings.map((headingType, j) => (
-                  <React.Fragment key={j}>
-                    {webPageData.headingData[headingType].map((url, i) => (
-                      <tr key={i}>
-                        {i === 0 && (
-                          <th rowSpan={webPageData.headingData[headingType].length}>
-                            {headingType}
-                          </th>
-                        )}
-                        <td>{url}</td>
-                      </tr>
-                    ))}
-                  </React.Fragment>
-                ))}
-                {/* End Heading Data */}
-                {/* Link Data */}
-                {links.map((linkType, j) => (
-                  <React.Fragment key={j}>
-                    {webPageData.hrefData[linkType].map((url, i) => (
-                      <tr key={i}>
-                        {i === 0 && (
-                          <th rowSpan={webPageData.hrefData[linkType].length}>
-                            {linkType} links
-                          </th>
-                        )}
-                        <td>{url}</td>
-                      </tr>
-                    ))}
-                  </React.Fragment>
-                ))}
-                {/* End Link Data */}
-              </tbody>
-            </table>
-          </div>
+          <>
+            <h1>Simple Web Page Data</h1>
+            <WebPageDataTable webPageData={webPageData} />
+          </>
         )}
         {!isFetchingWebPageData && !isFetchingAdvancedHrefData && !!advancedHrefData && (
-          <div className="card">
-            <table className="horizontal-table">
-              <thead>
-                <tr>
-                  <th></th>
-                  <th>URL</th>
-                  <th>Protocol</th>
-                  <th>Is Reachable</th>
-                  <th>Error</th>
-                </tr>
-              </thead>
-              <tbody>
-                {/* Advanced Link Data */}
-                {Array.isArray(links) && links.map((linkType, j) => (
-                  <React.Fragment key={j}>
-                    {Array.isArray(advancedHrefData[linkType]) && advancedHrefData[linkType].map((v, i) => (
-                      <tr key={i}>
-                        {i === 0 && (
-                          <th rowSpan={advancedHrefData[linkType].length}>
-                            {linkType} links
-                          </th>
-                        )}
-                        <td>{v.url}</td>
-                        <td>{v.protocol}</td>
-                        <td>{v.isReachable ? "true" : "false"}</td>
-                        <td>{v.error}</td>
-                      </tr>
-                    ))}
-                  </React.Fragment>
-                ))}
-                {/* End Advanced Link Data */}
-              </tbody>
-            </table>
-          </div>
+          <>
+            <h1>Advanced Web Page Data</h1>
+            <AdvancedHrefDataTable advancedHrefData={advancedHrefData} />
+          </>
         )}
         {(isFetchingWebPageData || isFetchingAdvancedHrefData) && (
           <ProgressSpinner role="status" aria-label="Loading">
@@ -186,44 +110,3 @@ function App() {
 
 export default App;
 
-/**
- * @typedef {object} HeadingData
- * @property {string[]} h1
- * @property {string[]} h2
- * @property {string[]} h3
- * @property {string[]} h4
- * @property {string[]} h5
- * @property {string[]} h6
- */
-
-/**
- * @typedef {object} HrefData
- * @property {string[]} internal
- * @property {string[]} external
- */
-
-/**
- * @typedef {object} AdvancedHrefDataItem
- * @property {string} url
- * @property {string} protocol
- * @property {boolean} redirected
- * @property {boolean} isReachable
- * @property {number} status
- * @property {string} error
- */
-
-/**
- * @typedef {object} AdvancedHrefData
- * @property {AdvancedHrefDataItem[]} internal
- * @property {AdvancedHrefDataItem[]} external
- */
-
-/**
- * @typedef {object} WebPageData
- * @property {string} docType value from the !DOCTYPE tag
- * @property {string} pageTitle Title of the page
- * @property {HeadingData} headingData Headings on the page, from H1 to H6
- * @property {HrefData} hrefData hrefs on the page, internal and external
- * @property {boolean} hasLoginForm true if a login/signin form was found, false otherwise
- * @property {string} getAdvancedLinkData a link for the next request to get advanced data about the Hrefs
- */
