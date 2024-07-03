@@ -1,20 +1,15 @@
 const { getPageScraperService } = require('./page-scraper');
-const { getBrowserService } = require('./browser');
 const { getPageHTML, SECONDS } = require('./utils');
 
 
 describe('getWebPageData', () => {
-    let /** @type {BrowserService} */ browserService = null;
     let /** @type {PageScraperService} */ pageScraperService = null;
 
     beforeAll(async () => {
-        browserService = getBrowserService();
-        await browserService.initializeBrowser();
         pageScraperService = getPageScraperService();
     });
 
     afterAll(() => {
-        browserService = null;
         pageScraperService = null;
     });
 
@@ -22,15 +17,13 @@ describe('getWebPageData', () => {
         const urls = ['https://github.com/login', 'https://linkedin.com/login'];
 
         for (const url of urls) {
-            const pageHTML = await await getPageHTML(url); // Jest requires both `await` keywords for some reason
+            const pageHTML = await await getPageHTML(url); // Jest requires both `await` keywords for some reason {@see https://stackoverflow.com/questions/69976411/jest-tlswrap-open-handle-error-using-simple-node-postgres-pool-query-fixed-wit}
             expect(async () => await pageScraperService.getWebPageData(pageHTML, url)).not.toThrowError();
         }
     }, 20 * SECONDS);
 
 
     it('should return an object whose `hasLoginForm` property should be true for login pages', async () => {
-        browserService = getBrowserService();
-        await browserService.initializeBrowser();
 
         const urls = [
             'https://github.com/login',

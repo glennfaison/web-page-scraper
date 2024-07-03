@@ -1,33 +1,28 @@
 /**
- * @type {import("../typedef")}
+ * @type {import('../typedef')}
+ * @typedef {import('../services/html-retriever').Service} HtmlRetriever.Service
  */
 
 /**
  * Returns a PageScraperService object
- * @param {BrowserService} browserService
+ * @param {HtmlRetriever.Service} htmlRetrieverService
  * @param {MemoryCacheService<Promise<WebPageData>>} memoryCacheService
  * @param {PageScraperService} pageScraperService
  * @returns {PageScraperRouter}
  */
-const getPageScraperRouter = (browserService, memoryCacheService, pageScraperService) => {
+const getPageScraperRouter = (htmlRetrieverService, memoryCacheService, pageScraperService) => {
 
     return {
         registerRoutes: (expressRouter) => {
             expressRouter.get('/api/v1/analyze', async (req, res) => {
-                let { url } = req.query;
-                performDeepAnalysis = req.query.performDeepAnalysis === 'true' ? true : false;
+                let { url, performDeepAnalysis } = req.query;
+                performDeepAnalysis = performDeepAnalysis === 'true' ? true : false;
                 if (!url) {
                     return res.sendStatus(400);
                 }
 
-                const page = await browserService.getNewPage();
-                await page.goto(url);
-                await page.setViewport({ width: 1200, height: 800 });
-                await browserService.autoScroll(page);
-                const pageHTML = await page.content();
-                await page.close();
-
-                const result = await pageScraperService.getWebPageData(pageHTML, url, { performDeepAnalysis });
+                const pageHtml = await htmlRetrieverService.getHtml(url, { useBrowser: performDeepAnalysis });
+                const result = await pageScraperService.getWebPageData(pageHtml, url, { performDeepAnalysis });
                 const advancedHrefDataPromise = result.advancedHrefDataPromise;
                 delete result.advancedHrefDataPromise;
                 const uuid = crypto.randomUUID();
@@ -46,13 +41,14 @@ const getPageScraperRouter = (browserService, memoryCacheService, pageScraperSer
                 try {
                     const cachedData = await memoryCacheService.get(id);
                     if (!cachedData) {
-                        return res.sendStatus(404);
+                        const response = { message: 'could not find data by id', id };
+                        return res.status(404).json(response);
                     }
                     const advancedHrefData = await cachedData.payload;
-                    return res.json({ advancedHrefData }).status(200);
+                    return res.status(200).json({ advancedHrefData });
                 } catch (err) {
                     const response = { error: err.message };
-                    return res.json(response).status(500);
+                    return res.status(500).json(response);
                 }
             });
         },

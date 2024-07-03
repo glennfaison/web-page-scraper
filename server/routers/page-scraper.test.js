@@ -1,14 +1,14 @@
 const request = require('supertest');
 const express = require('express');
 
-const { getBrowserService } = require('../services/browser');
 const { getMemoryCacheService } = require('../services/memory-cache');
 const { getPageScraperService } = require('../services/page-scraper');
 const { getPageScraperRouter } = require('./page-scraper');
 const { SECONDS } = require('../services/utils');
+const { getHtmlRetrieverService } = require('../services/html-retriever');
 
 const memoryCacheService = getMemoryCacheService();
-const browserService = getBrowserService();
+const htmlRetrieverService = getHtmlRetrieverService();
 const pageScraperService = getPageScraperService();
 
 describe('PageScraperRouter', () => {
@@ -16,30 +16,30 @@ describe('PageScraperRouter', () => {
     let /** @type {PageScraperRouter} */ router;
 
     beforeAll(async () => {
-        await browserService.initializeBrowser();
         app = express();
-        router = getPageScraperRouter(browserService, memoryCacheService, pageScraperService);
+        router = getPageScraperRouter(htmlRetrieverService, memoryCacheService, pageScraperService);
         router.registerRoutes(app);
     }, 10 * SECONDS);
 
     afterAll(async () => {
-        await browserService.closeBrowser();
+        await htmlRetrieverService.dispose();
     }, 10 * SECONDS);
 
     describe('GET /api/v1/analyze', () => {
         it('should return a status code of 400 if no URL is provided', async () => {
-            const response = await request(app).get('/api/v1/analyze');
+            const response = await await request(app).get('/api/v1/analyze'); // Jest requires both `await` keywords for some reason {@see https://stackoverflow.com/questions/69976411/jest-tlswrap-open-handle-error-using-simple-node-postgres-pool-query-fixed-wit}
             expect(response.statusCode).toBe(400);
         });
 
         it('should return a status code of 200 if given a working URL', async () => {
-            const response = await request(app).get('/api/v1/analyze?url=https://linkedin.com/login');
+            await process.nextTick(()=>{});
+            const response = await request(app).get('/api/v1/analyze?url=https://linkedin.com/login'); // Jest requires both `await` keywords for some reason {@see https://stackoverflow.com/questions/69976411/jest-tlswrap-open-handle-error-using-simple-node-postgres-pool-query-fixed-wit}
             expect(response.statusCode).toBe(200);
         }, 10 * SECONDS);
 
         it('should not store the advanced link data in the cache when performDeepAnalysis is false', async () => {
             const url = 'https://linkedin.com/login';
-            const response = await request(app).get(`/api/v1/analyze?url=${url}&performDeepAnalysis=false`);
+            const response = await await request(app).get(`/api/v1/analyze?url=${url}&performDeepAnalysis=false`); // Jest requires both `await` keywords for some reason {@see https://stackoverflow.com/questions/69976411/jest-tlswrap-open-handle-error-using-simple-node-postgres-pool-query-fixed-wit}
             expect(response.statusCode).toBe(200);
             expect(await memoryCacheService.get('advancedLinkData')).toBeUndefined();
         }, 10 * SECONDS);
@@ -81,14 +81,14 @@ describe('PageScraperRouter', () => {
                 return resolve(cachedData);
             });
             await memoryCacheService.set(id, cachedDataPromise, 60 * SECONDS);
-            const response = await request(app).get(`/api/v1/advancedLinkData/${id}`);
+            const response = await await request(app).get(`/api/v1/advancedLinkData/${id}`); // Jest requires both `await` keywords for some reason {@see https://stackoverflow.com/questions/69976411/jest-tlswrap-open-handle-error-using-simple-node-postgres-pool-query-fixed-wit}
             expect(response.statusCode).toBe(200);
             expect(response.body.advancedHrefData).toEqual(cachedData);
         });
 
         it('should return a 404 status code if the data is not found in the cache', async () => {
             const id = 'some-non-existing-idv';
-            const response = await request(app).get(`/api/v1/advancedLinkData/${id}`);
+            const response = await await request(app).get(`/api/v1/advancedLinkData/${id}`); // Jest requires both `await` keywords for some reason {@see https://stackoverflow.com/questions/69976411/jest-tlswrap-open-handle-error-using-simple-node-postgres-pool-query-fixed-wit}
             expect(response.statusCode).toBe(404);
         });
     });

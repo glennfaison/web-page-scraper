@@ -67,15 +67,6 @@
  */
 
 /**
- * @typedef {object} BrowserService
- * @property {() => Browser} getBrowser - Returns a Puppeteer browser instance
- * @property {() => Promise<void>} initializeBrowser - Initializes the Puppeteer browser instance
- * @property {() => Promise<Page>} getNewPage - Returns a new Puppeteer page instance
- * @property {() => Promise<void>} closeBrowser - Closes the browser instance
- * @property {(page: import('puppeteer').Page, maxScrolls=100) => Promise<void>} autoScroll - Scrolls the page automatically
- */
-
-/**
  * @typedef {object} PageScraperRouter
  * @property {(expressRouter: import('express').Express) => void} registerRoutes - Registers HTTP(S) routes
  */

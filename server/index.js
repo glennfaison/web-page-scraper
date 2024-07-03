@@ -5,13 +5,12 @@ const express = require('express');
 const cors = require('cors');
 const { rateLimit } = require('express-rate-limit');
 
-const { getBrowserService } = require('./services/browser');
 const { getPageScraperService } = require('./services/page-scraper');
 const { getMemoryCacheService } = require('./services/memory-cache');
 const { getPageScraperRouter } = require('./routers/page-scraper');
+const { getHtmlRetrieverService } = require('./services/html-retriever');
 
 const PORT = process.env.PORT || 3003;
-
 
 async function run() {
     const app = express();
@@ -26,12 +25,11 @@ async function run() {
 
     app.use('/', express.static('client/build'));
 
-    const browserSvc = getBrowserService();
-    await browserSvc.initializeBrowser();
     const pageScraperService = getPageScraperService();
+    const htmlRetrieverService = getHtmlRetrieverService();
     
     const /** @type {MemoryCacheService<WebPageData>} */ memoryCacheService = getMemoryCacheService();
-    const pageScraperRouter = getPageScraperRouter(browserSvc, memoryCacheService, pageScraperService);
+    const pageScraperRouter = getPageScraperRouter(htmlRetrieverService, memoryCacheService, pageScraperService);
     pageScraperRouter.registerRoutes(app);
 
     app.listen(PORT, () => {
