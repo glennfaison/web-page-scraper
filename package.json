@@ -11,8 +11,7 @@
     "dev:server": "nodemon server/index.js",
     "dev": "concurrently --kill-others \"yarn dev:server\" \"yarn dev:client\"",
     "test:client": "yarn --cwd ./client test",
-    "test:server": "jest --coverage --detectOpenHandles server/*.test.js server/**/*.test.js",
-    "test": "yarn test:server && yarn test:client",
+    "test:server": "jest --coverage --detectOpenHandles --forceExit server/*.test.js server/**/*.test.js",
     "start": "node server/index.js",
     "build:client": "yarn --cwd ./client build"
   },

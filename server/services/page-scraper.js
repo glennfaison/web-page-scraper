@@ -3,12 +3,13 @@
  */
 const cheerio = require('cheerio');
 const { URL } = require('url');
+const { translatePhrasesFromEnglish } = require("./translation");
 
 /**
  * Returns a PageScraperService object
  * @returns {PageScraperService}
  */
-const getPageScraperService = () => {
+const getPageScraperService = (translateFromEnglish = translatePhrasesFromEnglish) => {
     /**
      * Retrieves the language tags from an HTML document using Cheerio.
      *
@@ -27,33 +28,49 @@ const getPageScraperService = () => {
      * @param {cheerio.CheerioAPI} $ 
      * @returns {Promise<boolean>}
      */
-    const hasLoginForm = ($, electiveKeywords = ['login', 'log in', 'sign in', 'signin']) => {
-        const languages = getLanguageTags($);
+    const hasLoginForm = ($, electiveKeywords) => {
+        let languages = getLanguageTags($);
+        languages = [...new Set(languages)];
+        const defaultKeywords = ['login', 'log in', 'sign in', 'signin', 'username', 'email', 'connexion', 's\'authentifier'];
+        if (!Array.isArray(electiveKeywords)) {
+            electiveKeywords = [];
+        }
+        electiveKeywords.push(...defaultKeywords);
+        electiveKeywords = [...new Set(electiveKeywords)];
+        
         return new Promise((resolve) => {
-            $('form:has(input[type="password"])').each((_, form) => {
-                const passwordInputs = $(form).find('input[type="password"]');
-                const emailInputs = $(form).find('input[type="email"]');
-
-                // Assume this is not a login form if there's more than one password input
-                if (passwordInputs.length !== 1) {
+            translateFromEnglish(languages, electiveKeywords)
+                .then((results) => {
+                    for (const arr of results) {
+                        electiveKeywords.push(...arr);
+                    }
+                })
+                .then(() => {
+                    $('form:has(input[type="password"])').each((_, form) => {
+                        const passwordInputs = $(form).find('input[type="password"]');
+                        const emailInputs = $(form).find('input[type="email"]');
+        
+                        // Assume this is not a login form if there's more than one password input
+                        if (passwordInputs.length !== 1) {
+                            return resolve(false);
+                        }
+        
+                        // If there is one email input and one password input, assume it's a login form
+                        if (emailInputs.length === 1 && passwordInputs.length === 1) {
+                            return resolve(true);
+                        }
+        
+                        // Check if the form text contains login keywords
+                        const formHtml = $(form).html().toLowerCase();
+                        const formHtmlContainsAnyElectiveKeywords = electiveKeywords.some(keyword => formHtml.includes(keyword));
+        
+                        // If there is one password input and the form text contains login keywords, it's a login form
+                        if (formHtmlContainsAnyElectiveKeywords && passwordInputs.length === 1) {
+                            return resolve(true);
+                        }
+                    });
                     return resolve(false);
-                }
-
-                // If there is one email input and one password input, assume it's a login form
-                if (emailInputs.length === 1 && passwordInputs.length === 1) {
-                    return resolve(true);
-                }
-
-                // Check if the form text contains login keywords
-                const formHtml = $(form).html().toLowerCase();
-                const formHtmlContainsAnyElectiveKeywords = electiveKeywords.some(keyword => formHtml.includes(keyword));
-
-                // If there is one password input and the form text contains login keywords, it's a login form
-                if (formHtmlContainsAnyElectiveKeywords && passwordInputs.length === 1) {
-                    return resolve(true);
-                }
-            });
-            return resolve(false);
+                });
         });
     };
 

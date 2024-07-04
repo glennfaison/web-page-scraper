@@ -1,6 +1,7 @@
 const { getPageScraperService } = require('./page-scraper');
 const { getPageHTML, SECONDS } = require('./utils');
 
+let globalFetch = global.fetch;
 
 describe('getWebPageData', () => {
     let /** @type {PageScraperService} */ pageScraperService = null;
@@ -25,7 +26,6 @@ describe('getWebPageData', () => {
 
 
     it('should return an object whose `hasLoginForm` property should be true for login pages', async () => {
-
         const urls = [
             'https://github.com/login',
             'https://linkedin.com/login',
@@ -48,22 +48,68 @@ describe('getWebPageData', () => {
         const allLoginFormsFound = results.every((result) => result?.hasLoginForm === true);
         expect(allLoginFormsFound).toBe(true);
     }, 60 * SECONDS);
+    
+    it('should detect a login form in a page with french text', async () => {
+        const pageHtml = `
+            <!DOCTYPE html>
+            <html lang="fr">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Formulaire de connexion</title>
+            </head>
+            <body>
+                <h1>Connexion</h1>
+                <a href="http://example.com">Internal Link</a><a href="https://google.com">External Link</a>
+                <form>
+                    <label for="username">Nom d'utilisateur :</label>
+                    <input type="text" id="username" name="username" required>
+
+                    <label for="password">Mot de passe :</label>
+                    <input type="password" id="password" name="password" required>
+
+                    <button type="submit">Se connecter</button>
+                </form>
+            </body>
+            </html>
+            `;
+        const currentUrl = 'http://example.com';
+
+        const mockFetch = jest.fn();
+        globalFetch = global.fetch;
+        global.fetch = mockFetch;
+        mockFetch.mockImplementation((url) => {
+            if (url === 'http://example.com/') {
+                return Promise.resolve({ ok: true, status: 200 });
+            } else if (url === 'https://google.com/') {
+                return Promise.resolve({ ok: true, status: 200 });
+            } else {
+                return Promise.reject(new Error('Fetch error'));
+            }
+        });
+
+        const webPageData = await pageScraperService.getWebPageData(pageHtml, currentUrl);
+
+        expect(webPageData.hasLoginForm).toBe(true);
+        global.fetch = globalFetch;
+        jest.resetAllMocks();
+    });
 
     describe('advancedHrefDataPromise', () => {
-        let mockFetch, originalFetch;
+        let mockFetch;
         let /** @type {PageScraperService} */ pageScraperService;
         const pageHtml = '<a href="http://example.com">Internal Link</a><a href="https://google.com">External Link</a>';
         const currentUrl = 'http://example.com';
     
         beforeAll(() => {
             mockFetch = jest.fn();
-            originalFetch = global.fetch;
+            globalFetch = global.fetch;
             global.fetch = mockFetch;
             pageScraperService = getPageScraperService();
         });
     
         afterAll(() => {
-            global.fetch = originalFetch;
+            global.fetch = globalFetch;
             jest.resetAllMocks();
             pageScraperService = null;
         });
