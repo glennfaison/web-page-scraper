@@ -4,12 +4,21 @@
 const express = require('express');
 const cors = require('cors');
 const { rateLimit } = require('express-rate-limit');
+// Attempt to load the dotenv package a first time.
+require('dotenv').config();
 
 const { getPageScraperService } = require('./services/page-scraper');
 const { getMemoryCacheService } = require('./services/memory-cache');
 const { getPageScraperRouter } = require('./routers/page-scraper');
 const { getHtmlRetrieverService } = require('./services/html-retriever');
 
+// Load the appropriate .env file
+const environment = process.env.NODE_ENV || 'development';
+if (environment === 'production') {
+  require('dotenv').config({ path: '.env.production' });
+} else {
+  require('dotenv').config({ path: '.env.development' });
+}
 const PORT = process.env.PORT || 3003;
 
 async function run() {
@@ -27,7 +36,7 @@ async function run() {
 
     const pageScraperService = getPageScraperService();
     const htmlRetrieverService = getHtmlRetrieverService();
-    
+
     const /** @type {MemoryCacheService<WebPageData>} */ memoryCacheService = getMemoryCacheService();
     const pageScraperRouter = getPageScraperRouter(htmlRetrieverService, memoryCacheService, pageScraperService);
     pageScraperRouter.registerRoutes(app);
