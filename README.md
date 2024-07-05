@@ -14,18 +14,12 @@
     ```bash
     yarn test:server
     ```
-2.  **Run tests on the client:**
+3.  **Run tests on the client:**
 
     ```bash
     yarn test:client
     ```
-2.  **Build the project for production:**
-
-    ```bash
-    yarn build
-    ```
-    This will create a production build of the project in the `build` folder.
-3.  **Start the development server:**
+4.  **Start the development server:**
 
     ```bash
     yarn dev
