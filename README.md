@@ -32,9 +32,9 @@
     ```
     This will open the project in your browser at `http://localhost:3000`.
 
-## Running the app
+## Using the web app
 
-The app is designed to receive a URL in the field it provides, and run a crawl, the results of which are displayed in tabular form on the page.
+The web app is designed to receive a URL in the field it provides, and run a crawl, the results of which are displayed in tabular form on the page.
 
 
 # Architecture

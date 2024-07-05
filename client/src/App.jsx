@@ -5,7 +5,6 @@ import { WebPageDataTable } from "./components/WebPageDataTable";
 import { AdvancedHrefDataTable } from "./components/AdvancedHrefDataTable";
 import { useWebPageAnalysis } from "./App.hooks";
 
-
 export default function App() {
   const {
     url,

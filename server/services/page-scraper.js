@@ -3,7 +3,7 @@
  */
 const cheerio = require('cheerio');
 const { URL } = require('url');
-const { translatePhrasesFromEnglish } = require("./translation");
+const { translatePhrasesFromEnglish } = require('./translation');
 
 /**
  * Returns a PageScraperService object

@@ -34,7 +34,7 @@ export function useWebPageAnalysis() {
     let advancedLinkDataUrl;
     try {
       const encodedInputUrl = encodeURI(url);
-      const requestUrl = `http://localhost:3003/api/v1/analyze?performDeepAnalysis=${!!performDeepAnalysis}&url=${encodedInputUrl}`;
+      const requestUrl = `${process.env.REACT_APP_SERVER_URL}/api/v1/analyze?performDeepAnalysis=${!!performDeepAnalysis}&url=${encodedInputUrl}`;
       const result = await httpGet(requestUrl);
       setWebPageData(result);
       advancedLinkDataUrl = result.getAdvancedLinkData;
