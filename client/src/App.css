@@ -45,6 +45,9 @@ table.horizontal-table {
 
   th {
     text-transform: capitalize;
+    background-color: #f2f2f2;
+    width: 100px;
+    white-space: nowrap;
   }
 
   th,
@@ -53,12 +56,6 @@ table.horizontal-table {
     text-align: left;
     border-bottom: 1px solid #ddd;
     text-wrap: nowrap;
-  }
-
-  th {
-    background-color: #f2f2f2;
-    width: 100px;
-    white-space: nowrap;
   }
 
   tr:hover {
