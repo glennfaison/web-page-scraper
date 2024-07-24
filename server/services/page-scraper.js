@@ -98,7 +98,7 @@ const getPageScraperService = (translateFromEnglish = translatePhrasesFromEnglis
             }
             m[trimmedHref] = true;
 
-            if (currentUrlObject.origin === hrefObject.origin) {
+            if (areSameDomain(hrefObject, currentUrlObject)) {
                 hrefData.internal.push(trimmedHref);
                 return;
             }
@@ -107,6 +107,24 @@ const getPageScraperService = (translateFromEnglish = translatePhrasesFromEnglis
         });
 
         return hrefData;
+    };
+
+    /**
+     * Check if two URLs are in the same domain, or if one is in a subdomain of the other 
+     * @param {*} url1
+     * @param {*} url2 
+     * @returns {boolean}
+     */
+    const areSameDomain = (url1, url2) => {
+        try {
+            const domain1 = new URL(url1).hostname;
+            const domain2 = new URL(url2).hostname;
+            const isSubdomain = (sub, main) => sub.endsWith(`.${main}`) || sub === main;
+            return isSubdomain(domain1, domain2) || isSubdomain(domain2, domain1);
+        } catch (error) {
+            console.error("Invalid URL:", error);
+            return false;
+        }
     };
 
     /**
